@@ -26,13 +26,16 @@ class MicroBlogger
 	end
 
 	def run
-		puts "press Q to exit"
-		command = gets.chomp.downcase
-		case command
-		when "q" then puts "Goodbye"
-		else
-			puts "what the hell does \"#{command}\" means"
-			run
+		parts = ""
+		while parts[0] != "q"
+			puts "press Q to exit, T to tweet"
+			parts   = gets.chomp.downcase.split(" ")
+			case parts[0]
+			when "q" then puts "Goodbye"
+			when "t" then tweet(parts[1..-1].join(" "))
+			else
+				puts "what the hell does \"#{parts[0]}\" means"
+			end
 		end
 	end
 end
