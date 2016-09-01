@@ -10,6 +10,13 @@ class MicroBlogger
 		run
 	end
 
+	def screen_names
+		@screen_names = @client.followers.collect do |follower|
+			@client.user(follower).screen_name 
+		end
+		return @screen_names
+	end
+
 	def tweet(message)
 		if message.length > 139
 			puts "tweet is too long, press W for whatever, R for rewriting it and E to exit"
@@ -25,14 +32,29 @@ class MicroBlogger
 		end
 	end
 
+	def direct_message(target, message)
+		puts "trying to send #{target} this direct message:"
+		puts message
+		message = "d @#{target} #{message}"
+		screen_names
+		if @screen_names.include?(target)
+			tweet(message)
+		else
+			puts "you can only send messages to people who follow you"
+		end
+	end
+
+	
+
 	def run
 		parts = ""
 		while parts[0] != "q"
-			puts "press Q to exit, T to tweet"
+			puts "press Q to exit, T to tweet, DM to send a message"
 			parts   = gets.chomp.downcase.split(" ")
 			case parts[0]
-			when "q" then puts "Goodbye"
-			when "t" then tweet(parts[1..-1].join(" "))
+			when "q"  then puts "Goodbye"
+			when "t"  then tweet(parts[1..-1].join(" "))
+			when "dm" then direct_message(parts[1], parts[2..-1].join(" "))
 			else
 				puts "what the hell does \"#{parts[0]}\" means"
 			end
