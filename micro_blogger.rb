@@ -10,11 +10,11 @@ class MicroBlogger
 		run
 	end
 
-	def screen_names
-		@screen_names = @client.followers.collect do |follower|
+	def follower_names
+		@follower_names = @client.followers.collect do |follower|
 			@client.user(follower).screen_name 
 		end
-		return @screen_names
+		return @follower_names
 	end
 
 	def tweet(message)
@@ -32,12 +32,19 @@ class MicroBlogger
 		end
 	end
 
+	def spam_my_followers(message)
+		follower_names
+		@follower_names.each do |follower|
+			direct_message(follower, message)
+		end
+	end
+
 	def direct_message(target, message)
 		puts "trying to send #{target} this direct message:"
 		puts message
 		message = "d @#{target} #{message}"
-		screen_names
-		if @screen_names.include?(target)
+		follower_names
+		if @follower_names.include?(target)
 			tweet(message)
 		else
 			puts "you can only send messages to people who follow you"
@@ -49,12 +56,14 @@ class MicroBlogger
 	def run
 		parts = ""
 		while parts[0] != "q"
-			puts "press Q to exit, T to tweet, DM to send a message"
+			puts "press Q to exit, T to tweet" 
+			puts "DM to send a message, SPAM to spam all your followers"
 			parts   = gets.chomp.downcase.split(" ")
 			case parts[0]
-			when "q"  then puts "Goodbye"
-			when "t"  then tweet(parts[1..-1].join(" "))
-			when "dm" then direct_message(parts[1], parts[2..-1].join(" "))
+			when "q"  	then puts "Goodbye"
+			when "t"  	then tweet(parts[1..-1].join(" "))
+			when "dm" 	then direct_message(parts[1], parts[2..-1].join(" "))
+			when "spam" then spam_my_followers(parts[1..-1].join(" "))
 			else
 				puts "what the hell does \"#{parts[0]}\" means"
 			end
