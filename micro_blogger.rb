@@ -67,7 +67,7 @@ class MicroBlogger
 		friends = @client.friends.collect { |f| @client.user(f) }
 		friends.sort_by!{ |j| j.screen_name.downcase }
 		friends.each do |friend|
-			puts "\n\t#{friend.screen_name} wrote: \n #{friend.status.text}"
+			puts "\n\t#{friend.screen_name} wrote: \n #{friend.status.text} \n at #{friend.status.strftime("%A, %b %d")}"
 		end
 		return ""
 	end
