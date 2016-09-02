@@ -10,6 +10,17 @@ class MicroBlogger
 		run
 	end
 
+	def rate
+		require 'klout'
+		Klout.api_key = 'xu9ztgnacmjx3bu82warbr3h'
+		friends
+		#screen_names = @friends.collect { |friend| friend.screen_name }
+		@friends.each do |friend|
+			identity = Klout::Identity.find_by_screen_name(friend.screen_name)
+			puts "#{friend.screen_name}\trating: #{Klout::User.new(identity.id).score.score}"
+		end
+	end
+
 	def shorten(original_url)
 		require 'bitly'
 		puts "\n *** shortening this URL: #{original_url} ***"
@@ -24,6 +35,11 @@ class MicroBlogger
 			@client.user(follower).screen_name 
 		end
 		return @follower_names
+	end
+
+	def friends #used by last tweet
+		@friends = @client.friends.collect { |f| @client.user(f) }
+		@friends.sort_by!{ |j| j.screen_name.downcase }
 	end
 
 	def tweet(message)
@@ -62,9 +78,8 @@ class MicroBlogger
 
 	def everyones_last_tweet
 		puts "\nloading the latest tweets of your friends:\n"
-		friends = @client.friends.collect { |f| @client.user(f) }
-		friends.sort_by!{ |j| j.screen_name.downcase }
-		friends.each do |friend|
+		friends
+		@friends.each do |friend|
 			time = friend.status.created_at.strftime("%A, %b %d")
 			puts "\n\t#{friend.screen_name} wrote: \n #{friend.status.text} \n\t #{time}"
 		end
@@ -77,7 +92,7 @@ class MicroBlogger
 		while parts[0] != "q"
 			puts "\npress Q to exit, T to tweet, DM to send a message" 
 			puts "LAST to see everyone's last post, SPAM to spam all your followers"
-			puts "SHORT to shorten a URL"
+			puts "SHORT to shorten a URL, RATE to see your friends Klout ratings"
 			parts   = gets.chomp.downcase.split(" ")
 			case parts[0]
 			when "q"  	then puts "Goodbye"
@@ -86,6 +101,7 @@ class MicroBlogger
 			when "spam" then spam_my_followers(parts[1..-1].join(" "))
 			when "last" then everyones_last_tweet
 			when "short"then shorten(parts[1])
+			when "rate" then rate
 			else
 				puts "what the hell does \"#{parts[0]}\" means"
 			end
