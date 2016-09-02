@@ -63,10 +63,11 @@ class MicroBlogger
 	end
 
 	def everyones_last_tweet
-		puts "\n\nloading are the latest tweets of your friends:"
-		friends = @client.friends.collect { |f| @client.user(f)}
+		puts "\nloading the latest tweets of your friends:\n"
+		friends = @client.friends.collect { |f| @client.user(f) }
+		friends.sort_by!{ |j| j.screen_name.downcase }
 		friends.each do |friend|
-			puts "\n\n#{friend.screen_name} wrote: \n\t #{friend.status.text}"
+			puts "\n\t#{friend.screen_name} wrote: \n #{friend.status.text}"
 		end
 		return ""
 	end
@@ -75,7 +76,7 @@ class MicroBlogger
 	def run
 		parts = ""
 		while parts[0] != "q"
-			puts "press Q to exit, T to tweet, DM to send a message" 
+			puts "\npress Q to exit, T to tweet, DM to send a message" 
 			puts "LAST to see everyone's last post, SPAM to spam all your followers"
 			parts   = gets.chomp.downcase.split(" ")
 			case parts[0]
