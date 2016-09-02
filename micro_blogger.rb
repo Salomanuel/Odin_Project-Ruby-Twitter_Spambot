@@ -10,22 +10,20 @@ class MicroBlogger
 		run
 	end
 
-	def follower_names
+	def shorten(original_url)
+		require 'bitly'
+		puts "\n *** shortening this URL: #{original_url} ***"
+		Bitly.use_api_version_3
+		bitly = Bitly.new('hungryacademy', 'R_430e9f62250186d2612cca76eee2dbc6')
+		short_url = bitly.shorten(original_url).short_url
+		puts "...\ndone: #{short_url}"
+	end
+
+	def follower_names #used by spam my followers
 		@follower_names = @client.followers.collect do |follower|
 			@client.user(follower).screen_name 
 		end
 		return @follower_names
-	end
-
-	def friends_names
-		friends = @client.friends
-		uoo = ""
-		friends.each do |friend|
-			uoo << friend
-		end
-		return uoo
-		#@friend_names = @client.friends.collect { |friend| friend }
-		#return @friends_names
 	end
 
 	def tweet(message)
@@ -79,6 +77,7 @@ class MicroBlogger
 		while parts[0] != "q"
 			puts "\npress Q to exit, T to tweet, DM to send a message" 
 			puts "LAST to see everyone's last post, SPAM to spam all your followers"
+			puts "SHORT to shorten a URL"
 			parts   = gets.chomp.downcase.split(" ")
 			case parts[0]
 			when "q"  	then puts "Goodbye"
@@ -86,6 +85,7 @@ class MicroBlogger
 			when "dm" 	then direct_message(parts[1], parts[2..-1].join(" "))
 			when "spam" then spam_my_followers(parts[1..-1].join(" "))
 			when "last" then everyones_last_tweet
+			when "short"then shorten(parts[1])
 			else
 				puts "what the hell does \"#{parts[0]}\" means"
 			end
