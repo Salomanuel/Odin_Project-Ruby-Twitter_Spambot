@@ -17,11 +17,22 @@ class MicroBlogger
 		return @follower_names
 	end
 
+	def friends_names
+		friends = @client.friends
+		uoo = ""
+		friends.each do |friend|
+			uoo << friend
+		end
+		return uoo
+		#@friend_names = @client.friends.collect { |friend| friend }
+		#return @friends_names
+	end
+
 	def tweet(message)
 		if message.length > 139
 			puts "tweet is too long, press W for whatever, R for rewriting it and E to exit"
 			answer = gets.chomp.downcase
-			case 
+			case anwer
 			when "w" then @client.update(message[0..139])
 			#when "r" then tweet()
 			when "e" then exit
@@ -51,19 +62,28 @@ class MicroBlogger
 		end
 	end
 
-	
+	def everyones_last_tweet
+		puts "\n\nloading are the latest tweets of your friends:"
+		friends = @client.friends.collect { |f| @client.user(f)}
+		friends.each do |friend|
+			puts "\n\n#{friend.screen_name} wrote: \n\t #{friend.status.text}"
+		end
+		return ""
+	end
+
 
 	def run
 		parts = ""
 		while parts[0] != "q"
-			puts "press Q to exit, T to tweet" 
-			puts "DM to send a message, SPAM to spam all your followers"
+			puts "press Q to exit, T to tweet, DM to send a message" 
+			puts "LAST to see everyone's last post, SPAM to spam all your followers"
 			parts   = gets.chomp.downcase.split(" ")
 			case parts[0]
 			when "q"  	then puts "Goodbye"
 			when "t"  	then tweet(parts[1..-1].join(" "))
 			when "dm" 	then direct_message(parts[1], parts[2..-1].join(" "))
 			when "spam" then spam_my_followers(parts[1..-1].join(" "))
+			when "last" then everyones_last_tweet
 			else
 				puts "what the hell does \"#{parts[0]}\" means"
 			end
@@ -72,6 +92,7 @@ class MicroBlogger
 end
 
 blogger = MicroBlogger.new
+#puts blogger.everyones_last_tweet
 #blogger.tweet("MicroBlogger Initialized")
 #blogger.tweet("this tweet is way longer than the usual 140 characters. Let's see what will happen after I try to send it. I'm very curious about it. My bloody ear hurts because of this stupid otitis, I can't wait for it to finish")
 #blogger.tweet("are you still working?")
