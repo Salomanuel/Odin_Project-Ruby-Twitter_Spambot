@@ -1,6 +1,6 @@
 http://www.theodinproject.com/ruby-programming/ruby-on-the-web
 
-Project 1: Twitter Spambot
+# Project 1: Twitter Spambot
 
 You've briefly learned about how to use Ruby to send requests to the web and parse responses. When you're building real web applications, you'll often want to interface with other applications over the web via their API.
 
@@ -13,5 +13,5 @@ The protocol that's commonly used for this is called OAuth. In this case Twitter
 Note that, for this project, you may want to create a throwaway Twitter account (mine is @SpamBot26103678) because you'll probably accidentally go over their data limits or rate limits or other anti-spamming mechanisms and will send out a lot of testing tweets along the way. No sense getting your main account banned for playing around.
 Your Task
 
-    Do this project/tutorial from Jumpstart Lab. It will take you through how to authenticate with Twitter and start tweeting.
-    Don't worry about the last part on Klout.
+Do this project/tutorial from Jumpstart Lab. It will take you through how to authenticate with Twitter and start tweeting.
+Don't worry about the last part on Klout.
